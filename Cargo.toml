@@ -5,7 +5,6 @@ authors = ["raghav.narula"]
 edition = "2018"
 
 [dependencies]
-reqwest = "*"
 
 [[bin]]
 name = "day1"
