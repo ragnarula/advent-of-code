@@ -6,7 +6,7 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
 
-    let lines = match File::open(filename) {
+    let lines: Vec<String> = match File::open(filename) {
         Ok(file) => BufReader::new(file)
             .lines()
             .filter_map(|res| match res {
@@ -17,24 +17,27 @@ fn main() {
         Err(_) => Vec::new(),
     };
 
-    let result: String = lines
+    let perm: String = lines
         .iter()
         .flat_map(|i_line| lines.iter().map({ move |j_line| (i_line, j_line) }))
-        .map(|pair| pair.0.chars().zip(pair.1.chars()).collect())
-        .map(|vec: Vec<(char, char)>| {
-            (
-                vec.iter().fold(0, |n, pair| match pair {
-                    (a, b) if a != b => n + 1,
-                    _ => n,
-                }),
-                vec,
-            )
-        })
-        .filter(|item| item.0 == 1)
+        .map(|line_pair| line_pair.0.chars().zip(line_pair.1.chars()).collect())
+        .map(
+            |char_pairs: Vec<(char, char)>| -> (i32, Vec<(char, char)>) {
+                (
+                    char_pairs.iter().fold(0, |n, pair| match pair {
+                        (a, b) if a != b => n + 1,
+                        _ => n,
+                    }),
+                    char_pairs,
+                )
+            },
+        )
+        .filter(|diff_and_char_pairs| diff_and_char_pairs.0 == 1)
         .take(1)
-        .map(|item| item.1)
-        .map(|vec| -> String {
-            vec.iter()
+        .map(|diff_and_char_pairs| diff_and_char_pairs.1)
+        .map(|char_pairs| -> String {
+            char_pairs
+                .iter()
                 .filter_map(|pair| match pair {
                     (a, b) if a == b => Some(a),
                     _ => None,
@@ -43,7 +46,7 @@ fn main() {
         })
         .collect();
 
-    println!("{}", result);
+    println!("{}", perm);
 
     // for i_line in &lines {
     //     for j_line in &lines {
