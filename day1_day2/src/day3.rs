@@ -3,6 +3,16 @@ use std::env;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
+struct Point {
+    x: u32,
+    y: u32,
+}
+
+struct Rectangle {
+    top_left: Point,
+    bot_right: Point,
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
