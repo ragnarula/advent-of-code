@@ -18,13 +18,19 @@ fn reduce(input: &str) -> String {
     let mut result: (Option<char>, String) =
         input
             .chars()
-            .fold((None, String::new()), |acc, c| match acc {
-                (None, s) => (Some(c), s),
-                (Some(p), ref s) if does_react(p, c) => (None, s.clone()),
-                (Some(p), s) => {
-                    let mut new_string = s.clone();
-                    new_string.push(p);
-                    (Some(c), new_string)
+            .fold((None, String::new()), |mut acc, c| match acc {
+                (None, _) => {
+                    acc.0 = Some(c);
+                    acc
+                }
+                (Some(p), _) if does_react(p, c) => {
+                    acc.0 = None;
+                    acc
+                }
+                (Some(p), _) => {
+                    acc.0 = Some(c);
+                    acc.1.push(p);
+                    acc
                 }
             });
 
